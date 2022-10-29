@@ -5,7 +5,10 @@ import { IAuthFields } from '@/components/layout/header/auth-form/auth-form.inte
 import { validEmail } from '@/components/layout/header/auth-form/auth.validation'
 import Button from '@/components/ui/button/Button'
 import Field from '@/components/ui/field/Field'
+import { useActions } from '@/hooks/useActions'
+import { useAuth } from '@/hooks/useAuth'
 import { useOutside } from '@/hooks/useOutside'
+import { login } from '@/store/auth/auth.actions'
 import stylesIcon from '../icons-right/IconsRight.module.scss'
 import styles from './AuthForm.module.scss'
 
@@ -14,9 +17,9 @@ const AuthForm: FC = () => {
 
 	const [type, setType] = useState<'login' | 'register'>('login')
 
-	// /useActions
+	const { login: loginAction, register: registerAction } = useActions()
 
-	// const { isLoading } = useAuth()
+	const { isLoading } = useAuth()
 
 	const {
 		register,
@@ -28,7 +31,9 @@ const AuthForm: FC = () => {
 
 	const onSubmit: SubmitHandler<IAuthFields> = data => {
 		if (type === 'login') {
+			loginAction(data)
 		} else {
+			registerAction(data)
 		}
 	}
 
@@ -65,12 +70,15 @@ const AuthForm: FC = () => {
 					/>
 
 					<div className='mt-5 mb-1 text-center'>
-						<Button onClick={() => setType('login')}>Log in</Button>
+						<Button onClick={() => setType('login')} disabled={isLoading}>
+							Log in
+						</Button>
 					</div>
 
 					<button
 						className={styles.register}
 						onClick={() => setType('register')}
+						disabled={isLoading}
 					>
 						Sign up
 					</button>
